@@ -10,7 +10,8 @@
   STRUKTUR FILE (cari penanda "@@" dengan Ctrl+F)
     @@CSS       Gaya kustom (warna, kaca, hero, kartu testimoni, form, footer)
     @@HEADER    Navigasi atas + menu bawah HP (4 menu)
-    @@BERANDA   Hero banner, statistik, Program, Keunggulan, Profil, ajakan daftar
+    @@BERANDA   Hero banner, statistik, Program (carousel), Keunggulan, ajakan daftar, Profil maskot
+    @@PROGRAM   Carousel kartu program: HTML di @@BERANDA, gaya .prog-* di @@CSS, logika aturCarousel() di @@JS
     @@DAFTAR    Pendaftaran murid baru + akses cepat Web Orang Tua
     @@JADWAL    Jadwal kelas aktif (sinkron otomatis + tombol Segarkan)
     @@TESTI     Testimoni model kartu + form kirim testimoni
@@ -81,7 +82,6 @@
   --navy: #17407a; --blue: #2563b8; --orange: #e8700a; --ink: #1e293b;
   /* Tekstur batik geometris (lingkaran saling tumpuk) untuk sudut kartu */
   --batik-terang: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.55' stroke-width='1'%3E%3Ccircle cx='10' cy='10' r='10'/%3E%3Ccircle cx='30' cy='10' r='10'/%3E%3Ccircle cx='10' cy='30' r='10'/%3E%3Ccircle cx='30' cy='30' r='10'/%3E%3Ccircle cx='20' cy='20' r='10'/%3E%3C/g%3E%3C/svg%3E");
-  --batik-navy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%2317407a' stroke-opacity='.5' stroke-width='1'%3E%3Ccircle cx='10' cy='10' r='10'/%3E%3Ccircle cx='30' cy='10' r='10'/%3E%3Ccircle cx='10' cy='30' r='10'/%3E%3Ccircle cx='30' cy='30' r='10'/%3E%3Ccircle cx='20' cy='20' r='10'/%3E%3C/g%3E%3C/svg%3E");
   --batik-ungu: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%237c3aed' stroke-opacity='.45' stroke-width='1'%3E%3Ccircle cx='10' cy='10' r='10'/%3E%3Ccircle cx='30' cy='10' r='10'/%3E%3Ccircle cx='10' cy='30' r='10'/%3E%3Ccircle cx='30' cy='30' r='10'/%3E%3Ccircle cx='20' cy='20' r='10'/%3E%3C/g%3E%3C/svg%3E");
 }
 
@@ -191,7 +191,7 @@ body { background: #eef2ff; overflow-x: hidden; }
 .field .petunjuk { margin-top: .3rem; font-size: .78rem; color: #64748b; }
 .jebakan { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
 
-.hari-chip, .field .hari-chip { position: relative; display: inline-flex; margin-bottom: 0; }
+.hari-chip { position: relative; display: inline-flex; }
 .hari-chip input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .hari-chip span { display: inline-flex; align-items: center; justify-content: center; min-width: 3.9rem; padding: .5rem .85rem; border-radius: 9999px; font-size: .85rem; font-weight: 600; color: var(--navy); background: rgba(255, 255, 255, .75); border: 1px solid rgba(148, 163, 184, .6); transition: background .2s, color .2s, border-color .2s; }
 .hari-chip input:checked + span { color: #fff; background: var(--navy); border-color: var(--navy); }
@@ -226,7 +226,6 @@ body { background: #eef2ff; overflow-x: hidden; }
 .tabel-jadwal td { padding: .85rem 1rem; background: rgba(255, 255, 255, .72); border-block: 1px solid rgba(255, 255, 255, .9); }
 .tabel-jadwal td:first-child { border-left: 1px solid rgba(255, 255, 255, .9); border-radius: 1rem 0 0 1rem; }
 .tabel-jadwal td:last-child { border-right: 1px solid rgba(255, 255, 255, .9); border-radius: 0 1rem 1rem 0; }
-@media (min-width: 768px) { .tabel-jadwal td[data-label="Jenjang"], .tabel-jadwal td[data-label="Hari"], .tabel-jadwal td[data-label="Jam"], .tabel-jadwal td[data-label="Ruang"] { white-space: nowrap; } }
 @media (max-width: 767px) {
   .tabel-jadwal thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .tabel-jadwal, .tabel-jadwal tbody, .tabel-jadwal tr, .tabel-jadwal td { display: block; width: 100%; }
@@ -261,7 +260,7 @@ body { background: #eef2ff; overflow-x: hidden; }
 .kartu-testi::before { top: 0; right: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }
 .kartu-testi::after { bottom: 0; left: 0; clip-path: polygon(0 0, 0 100%, 100% 100%); }
 .kt-navy { color: #fff; background: radial-gradient(120% 70% at 50% 0, rgba(96, 165, 250, .38), transparent 62%), linear-gradient(165deg, #12386f 0%, #17407a 45%, #1c54a3 100%); border: 1px solid rgba(255, 255, 255, .4); box-shadow: 0 18px 40px rgba(23, 64, 122, .32), inset 0 1px 0 rgba(255, 255, 255, .45); }
-.kt-navy::before, .kt-navy::after { background-image: var(--batik-navy), linear-gradient(135deg, #f1f5f9, #cbd5e1 55%, #94a3b8); opacity: .8; }
+.kt-navy::before, .kt-navy::after { background-image: var(--batik-terang), linear-gradient(135deg, #f1f5f9, #cbd5e1 55%, #94a3b8); opacity: .8; }
 .kt-pastel { color: var(--ink); background: radial-gradient(110% 70% at 50% 0, rgba(255, 255, 255, .95), transparent 62%), linear-gradient(165deg, #e8defd 0%, #dbe6ff 55%, #ffe8d1 100%); border: 1px solid rgba(255, 255, 255, .95); box-shadow: 0 18px 40px rgba(124, 58, 237, .18), inset 0 1px 0 #fff; }
 .kt-pastel::before, .kt-pastel::after { background-image: var(--batik-ungu), linear-gradient(135deg, #ddd6fe, #c4b5fd 55%, #a78bfa); opacity: .85; }
 .kt-kepala { display: flex; align-items: center; justify-content: center; gap: .5rem; font-family: "Bricolage Grotesque", Figtree, sans-serif; font-weight: 800; font-size: 1.05rem; }
@@ -277,19 +276,64 @@ body { background: #eef2ff; overflow-x: hidden; }
 .kt-lagi { align-self: center; margin-top: .4rem; padding: .2rem .8rem; border-radius: 9999px; font-size: .75rem; font-weight: 700; background: rgba(255, 255, 255, .18); border: 1px solid rgba(255, 255, 255, .4); }
 .kt-pastel .kt-lagi { background: rgba(255, 255, 255, .7); border-color: rgba(124, 58, 237, .3); color: #5b21b6; }
 .kt-garis { height: 0; margin: auto 1.2rem .85rem; border-top: 1px dashed currentColor; opacity: .3; }
-.kt-isi + .kt-garis, .kt-lagi + .kt-garis { margin-top: auto; }
 .kt-isi, .kt-lagi { margin-bottom: .9rem; }
-.kt-lagi { margin-bottom: 1rem; }
 .kt-nama { font-family: "Bricolage Grotesque", Figtree, sans-serif; font-size: 1.1rem; font-weight: 800; line-height: 1.2; }
 .kt-sub { margin-top: .25rem; font-size: .8rem; line-height: 1.35; opacity: .85; }
 .kt-cek { display: inline-flex; align-items: center; gap: .3rem; align-self: center; margin-top: .65rem; padding: .22rem .7rem; border-radius: 9999px; font-size: .7rem; font-weight: 700; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .35); }
 .kt-pastel .kt-cek { color: #5b21b6; background: rgba(255, 255, 255, .7); border-color: rgba(124, 58, 237, .28); }
 .kt-templat { outline: 2px dashed rgba(255, 255, 255, .55); outline-offset: -.6rem; }
 
+/* ---------- Carousel program (@@PROGRAM) ---------- */
+.prog-carousel { position: relative; margin-top: 1.25rem; overflow-x: clip; border-radius: 1.5rem; }
+.prog-stage { --dx: 0px; display: grid; justify-items: center; align-items: stretch; padding: 1.75rem 0 1.5rem; touch-action: pan-y; -webkit-user-select: none; user-select: none; cursor: grab; }
+.prog-stage.drag { cursor: grabbing; }
+.prog-card { --c1: #bfdbfe; --c2: #c7d2fe; --ring: #2563b8; grid-area: 1 / 1; display: flex; flex-direction: column; width: min(24rem, 74vw); overflow: hidden; border-radius: 1.75rem; background: rgba(255, 255, 255, .94); border: 1px solid rgba(255, 255, 255, .95); box-shadow: 0 14px 34px rgba(23, 64, 122, .14); opacity: 0; transform: translateX(var(--dx)) scale(.84); transition: transform .55s cubic-bezier(.2, .8, .2, 1), opacity .45s, box-shadow .45s, filter .45s; will-change: transform; }
+.prog-stage:not(.siap) .prog-card, .prog-stage.drag .prog-card { transition: none; }
+.prog-card[data-pos="0"] { z-index: 3; opacity: 1; transform: translateX(var(--dx)) scale(1); box-shadow: 0 0 0 2px var(--ring), 0 28px 60px rgba(23, 64, 122, .26); }
+.prog-card[data-pos="-1"] { z-index: 2; opacity: .8; filter: saturate(.8); cursor: pointer; transform: translateX(calc(-94% + var(--dx))) scale(.84); }
+.prog-card[data-pos="1"] { z-index: 2; opacity: .8; filter: saturate(.8); cursor: pointer; transform: translateX(calc(94% + var(--dx))) scale(.84); }
+.prog-card[data-pos="2"] { z-index: 1; opacity: 0; pointer-events: none; }
+.prog-card[data-pos="-1"]:hover, .prog-card[data-pos="1"]:hover { opacity: 1; filter: none; }
+.prog-card:not([data-pos="0"]) a, .prog-card:not([data-pos="0"]) button { pointer-events: none; }
+@media (min-width: 768px) { .prog-card { width: min(26rem, 42vw); } }
+@media (min-width: 1280px) { .prog-card { width: 28rem; } }
+
+.prog-cover { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; min-height: 8.25rem; padding: 1rem 1.1rem; background: radial-gradient(70% 90% at 85% 10%, rgba(255, 255, 255, .7), transparent 60%), linear-gradient(135deg, var(--c1), var(--c2)); }
+.prog-cover::before { content: ""; position: absolute; inset: 0; background-image: var(--batik-navy); background-size: 36px; opacity: .16; -webkit-mask-image: linear-gradient(135deg, transparent 15%, #000); mask-image: linear-gradient(135deg, transparent 15%, #000); }
+.prog-level, .prog-flag { position: relative; padding: .3rem .8rem; border-radius: 9999px; font-size: .75rem; font-weight: 800; }
+.prog-level { color: var(--navy); background: rgba(255, 255, 255, .82); }
+.prog-flag { color: #fff; background: linear-gradient(135deg, #e8700a, #c95f00); box-shadow: 0 6px 14px rgba(232, 112, 10, .35); }
+.prog-ico { position: absolute; left: 1.25rem; bottom: -1.9rem; display: grid; place-items: center; width: 4.1rem; height: 4.1rem; border-radius: 1.2rem; font-size: 2.1rem; background: #fff; box-shadow: 0 10px 24px rgba(23, 64, 122, .18), 0 0 0 4px rgba(255, 255, 255, .7); transform: rotate(-6deg); }
+.prog-body { display: flex; flex: 1; flex-direction: column; padding: 2.7rem 1.35rem 1.4rem; }
+.prog-title { font-family: "Bricolage Grotesque", Figtree, sans-serif; font-size: 1.55rem; font-weight: 800; line-height: 1.15; color: var(--navy); }
+.prog-tag { margin-top: .3rem; font-size: .9rem; color: #64748b; }
+.prog-list { display: grid; flex: 1; align-content: start; gap: .55rem; margin-top: 1rem; font-size: .92rem; color: #334155; }
+.prog-list li { position: relative; padding-left: 1.75rem; line-height: 1.4; }
+.prog-list li::before { content: "✓"; position: absolute; left: 0; top: .05rem; display: grid; place-items: center; width: 1.2rem; height: 1.2rem; border-radius: 9999px; font-size: .7rem; font-weight: 900; color: #fff; background: var(--ring); }
+.prog-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
+.prog-chips span { padding: .22rem .65rem; border-radius: 9999px; font-size: .74rem; font-weight: 700; color: var(--navy); background: rgba(23, 64, 122, .07); border: 1px solid rgba(23, 64, 122, .12); }
+.prog-meta { margin-top: .85rem; font-size: .78rem; font-weight: 600; color: #64748b; }
+.prog-btn { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-height: 2.9rem; margin-top: 1rem; padding: .8rem 1.4rem; border-radius: 9999px; font-size: .95rem; font-weight: 800; color: #fff; background: var(--ring); box-shadow: 0 10px 22px rgba(23, 64, 122, .22); transition: transform .2s, box-shadow .2s, filter .2s; }
+.prog-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.prog-ctrl { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: .25rem; padding-bottom: .25rem; }
+.prog-nav { display: grid; place-items: center; width: 2.9rem; height: 2.9rem; border-radius: 9999px; font-size: 1.7rem; line-height: 1; color: var(--navy); background: rgba(255, 255, 255, .88); border: 1px solid rgba(255, 255, 255, .95); box-shadow: 0 6px 16px rgba(23, 64, 122, .14); transition: transform .2s, background .2s, color .2s; }
+.prog-nav:hover { background: var(--navy); color: #fff; transform: scale(1.06); }
+.prog-dots { display: flex; align-items: center; gap: .5rem; }
+.prog-dot { position: relative; width: .65rem; height: .65rem; border-radius: 9999px; background: rgba(23, 64, 122, .25); transition: width .3s, background .3s; }
+.prog-dot::before { content: ""; position: absolute; inset: -.7rem -.3rem; }
+.prog-dot[aria-current="true"] { width: 2rem; background: var(--orange); }
+
+/* ---------- Jadwal: filter + penanda khusus ---------- */
+.filter-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin-top: 1rem; }
+.pill-event { color: #5b21b6; background: #ede9fe; margin-left: .4rem; }
+@media (min-width: 768px) { .tabel-jadwal td[data-label="Hari"], .tabel-jadwal td[data-label="Jam"] { white-space: nowrap; } }
+
 /* ---------- Footer ---------- */
 .foot-judul { font-family: "Bricolage Grotesque", Figtree, sans-serif; font-size: .8rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255, 255, 255, .95); }
 .foot-link { display: inline-block; padding: .2rem 0; font-size: .9rem; color: rgba(255, 255, 255, .82); transition: color .2s, transform .2s; }
 .foot-link:hover { color: #fff; transform: translateX(3px); }
+.foot-link.active { color: #ff9a3c; font-weight: 800; }
+.foot-link.active:hover { color: #ffb066; transform: none; }
 
 /* ---------- Halaman per menu, menu bawah HP ---------- */
 .halaman { display: none; }
@@ -322,8 +366,8 @@ body { padding-bottom: 6rem; }
   </div>
 
   <!-- @@HEADER ============ NAVBAR (sticky glass) ============ -->
-  <header class="sticky top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4">
-    <nav class="glass-nav mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl px-3 py-2 sm:px-5" aria-label="Navigasi utama">
+  <header class="sticky top-0 z-50 px-4 pt-3 sm:px-6 lg:px-8 sm:pt-4">
+    <nav class="glass-nav mx-auto flex max-w-[96rem] items-center justify-between gap-3 rounded-2xl px-3 py-2 sm:px-5" aria-label="Navigasi utama">
       <a href="#beranda" class="flex items-center" aria-label="Bimbingan Belajar PLUS, ke Beranda"><img data-aset="logo_biru" alt="Logo Bimbel PLUS" width="310" height="130" class="h-9 w-auto sm:h-11"></a>
       <ul class="hidden items-center gap-1 md:flex">
         <li><a href="#beranda" class="nav-link" data-nav="beranda">Beranda</a></li>
@@ -346,7 +390,7 @@ body { padding-bottom: 6rem; }
     <!-- @@BERANDA ============ BERANDA: hero, program, keunggulan, profil, ajakan daftar ============ -->
     <div class="halaman aktif" id="hal-beranda" data-halaman="beranda">
 
-    <section id="beranda" class="mx-auto max-w-6xl px-4 pb-4 pt-6 sm:px-6 lg:pt-8" aria-labelledby="judul-hero">
+    <section id="beranda" class="mx-auto max-w-[100rem] px-4 pb-4 pt-6 sm:px-6 lg:px-8 lg:pt-8" aria-labelledby="judul-hero">
       <div class="hero-banner">
         <div class="hero-copy">
           <h1 id="judul-hero" class="fade-up">Karena Potensimu Layak Dapat <span class="hero-mark">“PLUS”</span></h1>
@@ -368,53 +412,76 @@ body { padding-bottom: 6rem; }
       </div>
     </section>
 
-    <section id="program" class="mx-auto max-w-6xl px-4 pb-10 pt-10 sm:px-6" aria-labelledby="judul-program">
+    <section id="program" class="mx-auto max-w-[100rem] px-4 pb-6 pt-10 sm:px-6 lg:px-8" aria-labelledby="judul-program">
       <div class="text-center">
         <span class="eyebrow">Program belajar</span>
         <h2 id="judul-program" class="mx-auto mt-3 max-w-2xl font-display text-3xl font-bold text-plus-navy sm:text-4xl">Pilih program sesuai jenjang anak</h2>
-        <p class="mx-auto mt-2 max-w-xl text-slate-600">Tiga kelas yang disusun bertahap, dari mengenal huruf pertama sampai persiapan target prestasi.</p>
+        <p class="mx-auto mt-2 max-w-xl text-slate-600">Geser kartu ke kiri atau kanan, atau ketuk kartu di samping, untuk memilih kelas yang paling cocok.</p>
       </div>
 
-      <div class="mt-8 grid gap-6 lg:grid-cols-3 lg:items-center">
-        <article class="glass flex flex-col rounded-3xl p-6 sm:p-7">
-          <div class="flex items-center gap-3"><span class="icon-box" aria-hidden="true">🌱</span><p class="text-sm font-semibold text-plus-blue">Pra TK &amp; TK</p></div>
-          <h3 class="mt-3 font-display text-2xl font-bold">Kelas Tunas Cerdas</h3>
-          <ul class="mt-4 flex-1 space-y-2 text-sm text-slate-700">
-            <li>✔ Mengenal huruf, angka, dan warna</li>
-            <li>✔ Belajar lewat permainan dan cerita</li>
-            <li>✔ Persiapan masuk SD</li>
-          </ul>
-          <a href="#pendaftaran" data-jenjang="TK" class="btn-glass mt-6">Daftar kelas ini</a>
-        </article>
+      <!-- @@PROGRAM carousel: logika di @@JS fungsi aturCarousel(), gaya di @@CSS (.prog-*) -->
+      <div id="prog-carousel" class="prog-carousel" role="group" aria-roledescription="carousel" aria-label="Pilihan program belajar" tabindex="0">
+        <div id="prog-stage" class="prog-stage">
 
-        <article class="glass-strong program-featured flex flex-col rounded-3xl p-6 sm:p-8 lg:py-10">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3"><span class="icon-box" aria-hidden="true">📘</span><p class="text-sm font-semibold text-plus-blue">SD Kelas 1–6</p></div>
-            <span class="badge-plus">Terpopuler</span>
-          </div>
-          <h3 class="mt-3 font-display text-3xl font-bold text-plus-navy">Kelas Pintar Utama</h3>
-          <ul class="mt-4 flex-1 space-y-2 text-slate-700">
-            <li>✔ Matematika, Bahasa Indonesia, dan IPA</li>
-            <li>✔ Bantuan PR dan penguatan materi sekolah</li>
-            <li>✔ Laporan perkembangan berkala</li>
-          </ul>
-          <a href="#pendaftaran" data-jenjang="SD" class="btn-primary mt-6">Daftar kelas ini</a>
-        </article>
+          <article class="prog-card" style="--c1:#bbf7d0;--c2:#a5f3fc;--ring:#0f9f6e" aria-roledescription="slide" aria-label="Kelas Tunas Cerdas">
+            <div class="prog-cover"><span class="prog-level">Pra TK &amp; TK</span><span class="prog-ico" aria-hidden="true">🌱</span></div>
+            <div class="prog-body">
+              <h3 class="prog-title">Kelas Tunas Cerdas</h3>
+              <p class="prog-tag">Belajar sambil bermain dan bercerita</p>
+              <ul class="prog-list">
+                <li>Mengenal huruf, angka, dan warna</li>
+                <li>Belajar lewat permainan dan cerita</li>
+                <li>Persiapan masuk SD</li>
+              </ul>
+              <div class="prog-chips" aria-hidden="true"><span>Huruf</span><span>Angka</span><span>Warna</span><span>Siap SD</span></div>
+              <p class="prog-meta">👥 Kelas kecil, maksimal 4 murid</p>
+              <a href="#pendaftaran" data-jenjang="TK" class="prog-btn">Daftar kelas ini <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
 
-        <article class="glass flex flex-col rounded-3xl p-6 sm:p-7">
-          <div class="flex items-center gap-3"><span class="icon-box" aria-hidden="true">🏆</span><p class="text-sm font-semibold text-plus-blue">SMP &amp; SMA</p></div>
-          <h3 class="mt-3 font-display text-2xl font-bold">Kelas Prestasi Unggul</h3>
-          <ul class="mt-4 flex-1 space-y-2 text-sm text-slate-700">
-            <li>✔ Pendalaman mata pelajaran sekolah</li>
-            <li>✔ Latihan soal dan pembahasan</li>
-            <li>✔ Bimbingan lanjutan sesuai target</li>
-          </ul>
-          <a href="#pendaftaran" data-jenjang="SMP" class="btn-glass mt-6">Daftar kelas ini</a>
-        </article>
+          <article class="prog-card" style="--c1:#fed7aa;--c2:#fde68a;--ring:#e8700a" aria-roledescription="slide" aria-label="Kelas Pintar Utama">
+            <div class="prog-cover"><span class="prog-level">SD Kelas 1–6</span><span class="prog-flag">⭐ Terpopuler</span><span class="prog-ico" aria-hidden="true">📘</span></div>
+            <div class="prog-body">
+              <h3 class="prog-title">Kelas Pintar Utama</h3>
+              <p class="prog-tag">Kuat di pelajaran inti sekolah</p>
+              <ul class="prog-list">
+                <li>Matematika, Bahasa Indonesia, dan IPA</li>
+                <li>Bantuan PR dan penguatan materi sekolah</li>
+                <li>Laporan perkembangan berkala</li>
+              </ul>
+              <div class="prog-chips" aria-hidden="true"><span>Matematika</span><span>B. Indonesia</span><span>IPA</span><span>PR</span></div>
+              <p class="prog-meta">👥 Kelas kecil, maksimal 4 murid</p>
+              <a href="#pendaftaran" data-jenjang="SD" class="prog-btn">Daftar kelas ini <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <article class="prog-card" style="--c1:#ddd6fe;--c2:#bfdbfe;--ring:#6d3ad9" aria-roledescription="slide" aria-label="Kelas Prestasi Unggul">
+            <div class="prog-cover"><span class="prog-level">SMP &amp; SMA</span><span class="prog-ico" aria-hidden="true">🏆</span></div>
+            <div class="prog-body">
+              <h3 class="prog-title">Kelas Prestasi Unggul</h3>
+              <p class="prog-tag">Bimbingan terarah menuju target prestasi</p>
+              <ul class="prog-list">
+                <li>Pendalaman mata pelajaran sekolah</li>
+                <li>Latihan soal dan pembahasan</li>
+                <li>Bimbingan lanjutan sesuai target</li>
+              </ul>
+              <div class="prog-chips" aria-hidden="true"><span>Mapel sekolah</span><span>Latihan soal</span><span>Target</span></div>
+              <p class="prog-meta">👥 Kelas kecil, maksimal 4 murid</p>
+              <a href="#pendaftaran" data-jenjang="SMP" class="prog-btn">Daftar kelas ini <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+        </div>
+        <div class="prog-ctrl">
+          <button type="button" id="prog-prev" class="prog-nav" aria-label="Program sebelumnya">‹</button>
+          <div id="prog-dots" class="prog-dots"></div>
+          <button type="button" id="prog-next" class="prog-nav" aria-label="Program berikutnya">›</button>
+        </div>
+        <p id="prog-live" class="sr-only" aria-live="polite"></p>
       </div>
     </section>
 
-    <section id="keunggulan" class="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6" aria-labelledby="judul-keunggulan">
+    <section id="keunggulan" class="mx-auto max-w-[100rem] px-4 pb-10 pt-6 sm:px-6 lg:px-8" aria-labelledby="judul-keunggulan">
       <div class="text-center">
         <span class="eyebrow">Mengapa PLUS</span>
         <h2 id="judul-keunggulan" class="mx-auto mt-3 max-w-2xl font-display text-3xl font-bold text-plus-navy sm:text-4xl">Belajar lebih terarah, nyaman, dan terpantau</h2>
@@ -444,22 +511,7 @@ body { padding-bottom: 6rem; }
       </div>
     </section>
 
-    <section id="profil" class="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6" aria-labelledby="judul-profil">
-      <div class="glass-strong grid items-center gap-6 rounded-3xl p-4 sm:p-6 md:grid-cols-2">
-        <img data-aset="profil" alt="Profil maskot Zed untuk sains, matematika, dan logika, serta Zoe untuk bahasa, literasi, dan seni di Bimbel Plus Nglimut" width="640" height="857" class="mx-auto max-h-[30rem] w-auto rounded-2xl object-contain">
-        <div>
-          <span class="eyebrow">Maskot kami</span>
-          <h2 id="judul-profil" class="mt-3 font-display text-2xl font-bold text-plus-navy sm:text-3xl">Kenalan dengan Zed dan Zoe</h2>
-          <p class="mt-2 text-slate-600">Sahabat pintar menuju puncak prestasi di Bimbel Plus Nglimut.</p>
-          <ul class="mt-4 space-y-3">
-            <li class="rounded-2xl bg-white/70 p-4"><p class="font-bold text-plus-navy">Zed: sains, matematika, dan logika</p><p class="mt-1 text-sm text-slate-600">Ahli matematika dan fisika, pemecah masalah cerdas, sekaligus pemimpin kelas. “Ayo taklukkan soal tersulit bareng aku, Zed!”</p></li>
-            <li class="rounded-2xl bg-white/70 p-4"><p class="font-bold text-plus-orange">Zoe: bahasa, literasi, dan seni</p><p class="mt-1 text-sm text-slate-600">Lembut, teliti, dan penuh empati, sangat kreatif, serta motivator belajar. “Belajar jadi lebih seru dan menyenangkan bersama Zoe!”</p></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="mx-auto max-w-6xl px-4 pb-12 pt-2 sm:px-6" aria-labelledby="judul-ajakan">
+    <section class="mx-auto max-w-[100rem] px-4 pb-10 pt-6 sm:px-6 lg:px-8" aria-labelledby="judul-ajakan">
       <div class="cta-band">
         <div>
           <h2 id="judul-ajakan" class="font-display text-2xl font-extrabold leading-tight sm:text-3xl lg:text-4xl">Siap membantu potensi anak Anda bertumbuh?</h2>
@@ -475,11 +527,27 @@ body { padding-bottom: 6rem; }
         </div>
       </div>
     </section>
+
+    <section id="profil" class="mx-auto max-w-[100rem] px-4 pb-14 pt-6 sm:px-6 lg:px-8" aria-labelledby="judul-profil">
+      <div class="glass-strong grid items-center gap-6 rounded-3xl p-4 sm:p-6 md:grid-cols-2">
+        <img data-aset="profil" alt="Profil maskot Zed untuk sains, matematika, dan logika, serta Zoe untuk bahasa, literasi, dan seni di Bimbel Plus Nglimut" width="640" height="857" class="mx-auto max-h-[30rem] w-auto rounded-2xl object-contain">
+        <div>
+          <span class="eyebrow">Maskot kami</span>
+          <h2 id="judul-profil" class="mt-3 font-display text-2xl font-bold text-plus-navy sm:text-3xl">Kenalan dengan Zed dan Zoe</h2>
+          <p class="mt-2 text-slate-600">Sahabat pintar menuju puncak prestasi di Bimbel Plus Nglimut.</p>
+          <ul class="mt-4 space-y-3">
+            <li class="rounded-2xl bg-white/70 p-4"><p class="font-bold text-plus-navy">Zed: sains, matematika, dan logika</p><p class="mt-1 text-sm text-slate-600">Ahli matematika dan fisika, pemecah masalah cerdas, sekaligus pemimpin kelas. “Ayo taklukkan soal tersulit bareng aku, Zed!”</p></li>
+            <li class="rounded-2xl bg-white/70 p-4"><p class="font-bold text-plus-orange">Zoe: bahasa, literasi, dan seni</p><p class="mt-1 text-sm text-slate-600">Lembut, teliti, dan penuh empati, sangat kreatif, serta motivator belajar. “Belajar jadi lebih seru dan menyenangkan bersama Zoe!”</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     </div>
 
     <!-- @@DAFTAR ============ PENDAFTARAN ============ -->
     <div class="halaman" id="hal-pendaftaran" data-halaman="pendaftaran">
-    <section id="pendaftaran" class="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6" aria-labelledby="judul-daftar">
+    <section id="pendaftaran" class="mx-auto max-w-[100rem] px-4 pb-10 pt-6 sm:px-6 lg:px-8" aria-labelledby="judul-daftar">
       <div class="glass overflow-hidden rounded-3xl">
         <img data-aset="banner_lulus_d" alt="Maskot robot Bimbel PLUS merayakan prestasi belajar" class="hidden h-auto w-full md:block">
         <img data-aset="banner_lulus_m" alt="Maskot robot Bimbel PLUS merayakan prestasi belajar" class="block h-auto w-full md:hidden">
@@ -507,7 +575,7 @@ body { padding-bottom: 6rem; }
               <span class="block font-display text-lg font-bold text-plus-navy">Sudah terdaftar? Masuk ke Web Orang Tua</span>
               <span class="block text-sm text-slate-600">Lihat jadwal, perkembangan belajar, dan informasi anak langsung dari sini.</span>
             </span>
-            <span class="hidden sm:inline-flex" aria-hidden="true"><span class="btn-primary">Buka</span></span>
+            <span class="btn-primary hidden sm:inline-flex" aria-hidden="true">Buka</span>
             <span class="text-2xl text-plus-orange sm:hidden" aria-hidden="true">→</span>
           </a>
 
@@ -576,8 +644,8 @@ body { padding-bottom: 6rem; }
                   <span class="mb-1.5 block text-sm font-semibold text-slate-700" id="lbl-hari-private">Hari yang diinginkan</span>
                   <div class="flex flex-wrap gap-2" role="group" aria-labelledby="lbl-hari-private" data-hari="private"></div>
                 </div>
-                <div class="field"><label for="p-jam1">Jam mulai</label><input id="p-jam1" name="pjam1" type="time" class="input-glass w-full rounded-xl px-4 py-3"></div>
-                <div class="field"><label for="p-jam2">Jam selesai</label><input id="p-jam2" name="pjam2" type="time" class="input-glass w-full rounded-xl px-4 py-3"></div>
+                <div class="field"><label for="p-jam1">Jam mulai</label><input id="p-jam1" name="jam1" type="time" class="input-glass w-full rounded-xl px-4 py-3"></div>
+                <div class="field"><label for="p-jam2">Jam selesai</label><input id="p-jam2" name="jam2" type="time" class="input-glass w-full rounded-xl px-4 py-3"></div>
               </div>
 
               <!-- Program Event (hanya jika diumumkan admin) -->
@@ -612,7 +680,7 @@ body { padding-bottom: 6rem; }
 
     <!-- @@JADWAL ============ JADWAL KELAS AKTIF ============ -->
     <div class="halaman" id="hal-jadwal" data-halaman="jadwal">
-    <section id="jadwal" class="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6" aria-labelledby="judul-jadwal">
+    <section id="jadwal" class="mx-auto max-w-[100rem] px-4 pb-10 pt-6 sm:px-6 lg:px-8" aria-labelledby="judul-jadwal">
       <div class="glass overflow-hidden rounded-3xl"><img data-aset="banner_kelas_d" alt="Maskot robot Bimbel PLUS di ruang kelas" class="h-32 w-full object-cover sm:h-auto" style="object-position:50% 55%"></div>
       <h2 id="judul-jadwal" class="mt-8 max-w-2xl font-display text-3xl font-bold text-plus-navy sm:text-4xl">Jadwal kelas aktif</h2>
       <p class="mt-2 max-w-xl text-slate-600">Lihat kelas yang sedang berjalan dan sisa kursi yang masih tersedia. Data mengikuti jadwal terbaru dari web pengajar.</p>
@@ -626,15 +694,23 @@ body { padding-bottom: 6rem; }
           </button>
         </div>
 
-        <div id="filter-jadwal" class="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter jadwal berdasarkan program">
-          <button type="button" class="chip-filter" data-filter="semua" aria-pressed="true">Semua</button>
-          <button type="button" class="chip-filter" data-filter="tunas" aria-pressed="false">Pra TK &amp; TK</button>
-          <button type="button" class="chip-filter" data-filter="pintar" aria-pressed="false">SD</button>
-          <button type="button" class="chip-filter" data-filter="prestasi" aria-pressed="false">SMP &amp; SMA</button>
+        <div class="filter-bar">
+          <div id="filter-jadwal" class="flex flex-wrap gap-2" role="group" aria-label="Filter jenis kelas">
+            <button type="button" class="chip-filter" data-filter="semua" aria-pressed="true">Semua</button>
+            <button type="button" class="chip-filter" data-filter="reguler" aria-pressed="false">Reguler</button>
+            <button type="button" class="chip-filter" data-filter="khusus" aria-pressed="false">⭐ Khusus / Event</button>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <label class="sr-only" for="f-mapel">Filter mata pelajaran</label>
+            <select id="f-mapel" class="input-glass rounded-full px-4 py-2 text-sm"><option value="">Semua mapel</option></select>
+            <label class="sr-only" for="f-hari">Filter hari</label>
+            <select id="f-hari" class="input-glass rounded-full px-4 py-2 text-sm"><option value="">Semua hari</option></select>
+          </div>
         </div>
+        <p id="ringkas-jadwal" class="mt-3 text-sm text-slate-600" aria-live="polite"></p>
         <table class="tabel-jadwal mt-4">
           <caption class="sr-only">Daftar kelas aktif Bimbel PLUS</caption>
-          <thead><tr><th scope="col">Kelas</th><th scope="col">Jenjang</th><th scope="col">Hari</th><th scope="col">Jam</th><th scope="col">Ruang</th><th scope="col">Kuota</th></tr></thead>
+          <thead><tr><th scope="col">Kelas</th><th scope="col">Mapel</th><th scope="col">Hari</th><th scope="col">Jam</th><th scope="col">Tentor</th><th scope="col">Kuota</th></tr></thead>
           <tbody id="isi-jadwal"></tbody>
         </table>
       </div>
@@ -643,7 +719,7 @@ body { padding-bottom: 6rem; }
 
     <!-- @@TESTI ============ TESTIMONI (model kartu) ============ -->
     <div class="halaman" id="hal-testimoni" data-halaman="testimoni">
-    <section id="testimoni" class="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6" aria-labelledby="judul-testimoni">
+    <section id="testimoni" class="mx-auto max-w-[100rem] px-4 pb-10 pt-6 sm:px-6 lg:px-8" aria-labelledby="judul-testimoni">
       <div class="glass overflow-hidden rounded-3xl">
         <img data-aset="banner_login_d" alt="Maskot robot Bimbel PLUS bersama guru dan murid" class="hidden h-auto w-full md:block">
         <img data-aset="banner_login_m" alt="Maskot robot Bimbel PLUS bersama guru dan murid" class="block h-auto w-full md:hidden">
@@ -692,8 +768,8 @@ body { padding-bottom: 6rem; }
   </main>
 
   <!-- @@FOOTER ============ FOOTER ============ -->
-  <footer id="kontak" class="rounded-t-[2.5rem] bg-gradient-to-br from-[#0f2d5a] to-[#17407a] px-4 pb-6 pt-10 text-white sm:px-6">
-    <div class="mx-auto grid max-w-6xl gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-[1.35fr_.8fr_1fr_1.35fr]">
+  <footer id="kontak" class="rounded-t-[2.5rem] bg-gradient-to-br from-[#0f2d5a] to-[#17407a] px-4 pb-6 pt-10 text-white sm:px-6 lg:px-8">
+    <div class="mx-auto grid max-w-[96rem] gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-[1.35fr_.8fr_1fr_1.35fr]">
       <div>
         <img data-aset="logo_putih" alt="Logo Bimbel PLUS" width="310" height="130" class="h-12 w-auto">
         <p class="mt-3 font-display text-base font-bold leading-snug">Karena Potensimu Layak Dapat “PLUS”</p>
@@ -703,11 +779,11 @@ body { padding-bottom: 6rem; }
       <nav aria-label="Tautan cepat">
         <h3 class="foot-judul">Menu</h3>
         <ul class="mt-3 space-y-0.5">
-          <li><a href="#beranda" class="foot-link">Beranda</a></li>
+          <li><a href="#beranda" class="foot-link" data-nav="beranda">Beranda</a></li>
           <li><a href="#program" class="foot-link">Program</a></li>
-          <li><a href="#pendaftaran" class="foot-link">Pendaftaran</a></li>
-          <li><a href="#jadwal" class="foot-link">Jadwal Kelas</a></li>
-          <li><a href="#testimoni" class="foot-link">Testimoni</a></li>
+          <li><a href="#pendaftaran" class="foot-link" data-nav="pendaftaran">Pendaftaran</a></li>
+          <li><a href="#jadwal" class="foot-link" data-nav="jadwal">Jadwal Kelas</a></li>
+          <li><a href="#testimoni" class="foot-link" data-nav="testimoni">Testimoni</a></li>
         </ul>
       </nav>
 
@@ -722,15 +798,15 @@ body { padding-bottom: 6rem; }
       <div>
         <h3 class="foot-judul">Lokasi</h3>
         <div class="mt-3 overflow-hidden rounded-2xl border border-white/30">
-          <iframe title="Lokasi Bimbel PLUS di Google Maps" src="https://www.google.com/maps?q=Nglimut,+Gonoharjo,+Limbangan,+Kendal,+Jawa+Tengah&amp;output=embed" class="h-36 w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+          <iframe title="Lokasi Bimbel PLUS di Google Maps (V85G+J3M, Nglimut, Gonoharjo, Limbangan)" src="https://www.google.com/maps?q=-7.1409125,110.3251719&amp;z=18&amp;hl=id&amp;output=embed" class="h-36 w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
         </div>
-        <a href="https://www.google.com/maps/search/?api=1&amp;query=Nglimut+Gonoharjo+Limbangan+Kendal+Jawa+Tengah" target="_blank" rel="noopener noreferrer" class="foot-link mt-2 font-semibold">Buka di Google Maps ↗</a>
+        <a href="https://maps.app.goo.gl/hFyuowFDSqh1hWuPA" target="_blank" rel="noopener noreferrer" class="foot-link mt-2 font-semibold">Buka di Google Maps ↗</a>
       </div>
     </div>
 
-    <div class="mx-auto mt-8 flex max-w-6xl flex-col gap-1.5 border-t border-white/20 pt-4 text-xs text-white/75 sm:flex-row sm:items-center sm:justify-between">
+    <div class="mx-auto mt-8 flex max-w-[96rem] flex-col gap-1.5 border-t border-white/20 pt-4 text-xs text-white/75 sm:flex-row sm:items-center sm:justify-between">
       <p>© <span id="tahun">2026</span> Bimbel by PLUS. All Rights Reserved.</p>
-      <a href="https://www.google.com/maps/search/?api=1&amp;query=Nglimut+Gonoharjo+Limbangan+Kendal+Jawa+Tengah" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-white"><span aria-hidden="true">📍</span>Nglimut, Limbangan, Kendal, Jawa Tengah</a>
+      <a href="https://maps.app.goo.gl/hFyuowFDSqh1hWuPA" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-white"><span aria-hidden="true">📍</span>Nglimut, Limbangan, Kendal, Jawa Tengah</a>
     </div>
   </footer>
 
@@ -758,13 +834,13 @@ body { padding-bottom: 6rem; }
     }
   };
 
-  /* Data kelas cadangan (contoh). Diganti otomatis oleh data web pengajar. */
+  /* Data kelas cadangan (contoh). Bentuknya sama dengan data kelas di web pengajar; diganti otomatis oleh data asli. */
   var KELAS = [
-    { id: 'tunas-a', nama: 'Tunas Cerdas A', program: 'Kelas Tunas Cerdas', jenjang: 'Pra TK & TK', grup: 'tunas', hari: 'Senin & Rabu', jam: '09.00 – 10.30', ruang: 'Ruang A', terisi: 2, kuota: 4 },
-    { id: 'pintar-a', nama: 'Pintar Utama A', program: 'Kelas Pintar Utama', jenjang: 'SD Kelas 1–3', grup: 'pintar', hari: 'Senin & Kamis', jam: '15.30 – 17.00', ruang: 'Ruang B', terisi: 3, kuota: 4 },
-    { id: 'pintar-b', nama: 'Pintar Utama B', program: 'Kelas Pintar Utama', jenjang: 'SD Kelas 4–6', grup: 'pintar', hari: 'Selasa & Jumat', jam: '15.30 – 17.00', ruang: 'Ruang B', terisi: 4, kuota: 4 },
-    { id: 'prestasi-a', nama: 'Prestasi Unggul A', program: 'Kelas Prestasi Unggul', jenjang: 'SMP', grup: 'prestasi', hari: 'Rabu & Sabtu', jam: '16.00 – 17.30', ruang: 'Ruang C', terisi: 1, kuota: 4 },
-    { id: 'prestasi-b', nama: 'Prestasi Unggul B', program: 'Kelas Prestasi Unggul', jenjang: 'SMA', grup: 'prestasi', hari: 'Kamis & Sabtu', jam: '18.30 – 20.00', ruang: 'Ruang C', terisi: 2, kuota: 4 }
+    { id: 'K1', nama: 'Calistung Ceria', mapel: 'Calistung', hari: 'Senin', jam_mulai: '15:30', jam_selesai: '16:30', tentor: 'Kak Sari', kapasitas: 8, terisi: 1, aktif: true, khusus: false, tgl_event: '' },
+    { id: 'K2', nama: 'Matematika SD', mapel: 'Matematika', hari: 'Selasa', jam_mulai: '16:30', jam_selesai: '17:30', tentor: 'Kak Budi', kapasitas: 8, terisi: 2, aktif: true, khusus: false, tgl_event: '' },
+    { id: 'K3', nama: 'Matematika SMP', mapel: 'Matematika', hari: 'Rabu', jam_mulai: '19:00', jam_selesai: '20:30', tentor: 'Kak Budi', kapasitas: 6, terisi: 2, aktif: true, khusus: false, tgl_event: '' },
+    { id: 'K5', nama: 'IPA SMP', mapel: 'IPA', hari: 'Jumat', jam_mulai: '19:00', jam_selesai: '20:30', tentor: 'Kak Andi', kapasitas: 6, terisi: 2, aktif: true, khusus: false, tgl_event: '' },
+    { id: 'K6', nama: 'Calistung Akhir Pekan', mapel: 'Calistung', hari: 'Sabtu', jam_mulai: '09:00', jam_selesai: '10:00', tentor: 'Kak Sari', kapasitas: 8, terisi: 2, aktif: true, khusus: false, tgl_event: '' }
   ];
   var EVENT = [];       /* pengumuman event dari admin; kosong = opsi Event terkunci */
   var TESTIMONI = [];   /* diisi dari Google Sheet */
@@ -889,38 +965,99 @@ body { padding-bottom: 6rem; }
   /* ================================================================
      4. JADWAL KELAS AKTIF (tampilan, filter, sinkron)
      ================================================================ */
-  var grupAktif = 'semua';
   var halamanAktif = 'beranda';
   var sedangMuat = false;
   var terakhirSukses = 0;
+  var saring = { tipe: 'semua', mapel: '', hari: '' };
 
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function isoHariIni() { var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+  function tglLokal(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+    return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+  }
+  function tglPendek(iso) {
+    var d = tglLokal(iso);
+    return d ? d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+  }
+  function jamTeks(k) {
+    var a = String(k.jam_mulai || '').replace(':', '.'), b = String(k.jam_selesai || '').replace(':', '.');
+    return a ? (b ? a + ' – ' + b : a) : '';
+  }
+  /* Sisa kursi: -1 berarti kapasitas tidak dibatasi (kapasitas 0 di web pengajar) */
+  function sisaKursi(k) { return k.kapasitas > 0 ? Math.max(0, k.kapasitas - k.terisi) : -1; }
+  function teksKuota(k) {
+    var s = sisaKursi(k);
+    if (s < 0) { return 'kuota terbuka'; }
+    return s > 0 ? 'sisa ' + s + ' dari ' + k.kapasitas + ' kursi' : 'penuh (' + k.kapasitas + ' kursi)';
+  }
   function infoKuota(k) {
-    var sisa = k.kuota - k.terisi;
-    if (sisa <= 0) { return '<span class="pill pill-penuh">Penuh</span>'; }
-    return '<span class="pill ' + (sisa === 1 ? 'pill-sedikit' : 'pill-ok') + '">Sisa ' + sisa + ' kursi</span>';
+    var s = sisaKursi(k);
+    if (s < 0) { return '<span class="pill pill-ok">Kuota terbuka</span>'; }
+    if (s === 0) { return '<span class="pill pill-penuh">Penuh · ' + k.kapasitas + ' kursi</span>'; }
+    return '<span class="pill ' + (s <= 1 ? 'pill-sedikit' : 'pill-ok') + '">Sisa ' + s + ' dari ' + k.kapasitas + ' kursi</span>';
   }
 
-  function tampilkanJadwal(grup) {
-    var baris = KELAS.filter(function (k) { return grup === 'semua' || k.grup === grup; }).map(function (k) {
+  /* Kelas yang tampil: aktif di web pengajar, dan (jika kelas khusus) belum lewat tanggalnya */
+  function kelasAktif() {
+    var h = isoHariIni();
+    function urut(k) { var i = HARI.indexOf(k.hari); return i < 0 ? 99 : i; }
+    return KELAS.filter(function (k) { return k.aktif && (!k.khusus || !k.tgl_event || k.tgl_event >= h); })
+      .sort(function (a, b) {
+        return urut(a) - urut(b) || (a.jam_mulai > b.jam_mulai ? 1 : (a.jam_mulai < b.jam_mulai ? -1 : 0)) || String(a.tgl_event).localeCompare(String(b.tgl_event));
+      });
+  }
+
+  function isiPilihan(sel, semuaTeks, daftar) {
+    var lama = sel.value;
+    kosongkan(sel);
+    opsi(sel, '', semuaTeks);
+    daftar.forEach(function (x) { opsi(sel, x, x); });
+    sel.value = daftar.indexOf(lama) > -1 ? lama : '';
+    return sel.value;
+  }
+  function isiFilter() {
+    var mapel = [], hari = [];
+    kelasAktif().forEach(function (k) {
+      if (k.mapel && mapel.indexOf(k.mapel) < 0) { mapel.push(k.mapel); }
+      if (k.hari && hari.indexOf(k.hari) < 0) { hari.push(k.hari); }
+    });
+    mapel.sort(function (a, b) { return a.localeCompare(b, 'id'); });
+    hari.sort(function (a, b) { return HARI.indexOf(a) - HARI.indexOf(b); });
+    saring.mapel = isiPilihan($('#f-mapel'), 'Semua mapel', mapel);
+    saring.hari = isiPilihan($('#f-hari'), 'Semua hari', hari);
+  }
+
+  function tampilkanJadwal() {
+    var aktif = kelasAktif();
+    var tampil = aktif.filter(function (k) {
+      return (saring.tipe === 'semua' || (saring.tipe === 'khusus') === k.khusus) &&
+        (!saring.mapel || k.mapel === saring.mapel) && (!saring.hari || k.hari === saring.hari);
+    });
+    var baris = tampil.map(function (k) {
       return '<tr>' +
-        '<td data-label="Kelas"><strong>' + esc(k.nama) + '</strong></td>' +
-        '<td data-label="Jenjang">' + esc(k.jenjang) + '</td>' +
-        '<td data-label="Hari">' + esc(k.hari) + '</td>' +
-        '<td data-label="Jam">' + esc(k.jam) + ' WIB</td>' +
-        '<td data-label="Ruang">' + esc(k.ruang) + '</td>' +
+        '<td data-label="Kelas"><span><strong>' + esc(k.nama) + '</strong>' + (k.khusus ? '<span class="pill pill-event">⭐ Khusus</span>' : '') + '</span></td>' +
+        '<td data-label="Mapel">' + esc(k.mapel || '-') + '</td>' +
+        '<td data-label="Hari"><span>' + esc(k.hari || '-') + (k.tgl_event ? '<br><small class="text-slate-500">' + esc(tglPendek(k.tgl_event)) + '</small>' : '') + '</span></td>' +
+        '<td data-label="Jam">' + esc(jamTeks(k) || '-') + (jamTeks(k) ? ' WIB' : '') + '</td>' +
+        '<td data-label="Tentor">' + esc(k.tentor || '-') + '</td>' +
         '<td data-label="Kuota">' + infoKuota(k) + '</td>' +
         '</tr>';
     });
-    $('#isi-jadwal').innerHTML = baris.length ? baris.join('') : '<tr><td>Belum ada kelas aktif pada kategori ini.</td></tr>';
+    $('#isi-jadwal').innerHTML = baris.length ? baris.join('') :
+      '<tr><td colspan="6">' + (aktif.length ? 'Tidak ada kelas yang cocok dengan filter ini.' : 'Belum ada kelas aktif saat ini. Silakan hubungi admin lewat WhatsApp.') + '</td></tr>';
+    $('#ringkas-jadwal').textContent = aktif.length ? 'Menampilkan ' + tampil.length + ' dari ' + aktif.length + ' kelas aktif.' : '';
   }
 
   $$('#filter-jadwal .chip-filter').forEach(function (tombol) {
     tombol.addEventListener('click', function () {
       $$('#filter-jadwal .chip-filter').forEach(function (t) { t.setAttribute('aria-pressed', t === tombol ? 'true' : 'false'); });
-      grupAktif = tombol.getAttribute('data-filter');
-      tampilkanJadwal(grupAktif);
+      saring.tipe = tombol.getAttribute('data-filter');
+      tampilkanJadwal();
     });
   });
+  $('#f-mapel').addEventListener('change', function () { saring.mapel = this.value; tampilkanJadwal(); });
+  $('#f-hari').addEventListener('change', function () { saring.hari = this.value; tampilkanJadwal(); });
 
   function jamSekarang() {
     return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\./g, ':');
@@ -1010,32 +1147,43 @@ body { padding-bottom: 6rem; }
   });
   $('#b-tingkat').addEventListener('change', isiPilihanJadwal);
 
-  /* Apakah kelas k cocok dengan jenjang dan tingkat yang dipilih? */
+  /* Jenjang yang dituju sebuah kelas, ditebak dari nama/mapel (web pengajar tidak punya kolom jenjang).
+     Kosong = kelas umum yang cocok untuk semua jenjang. Bila kelak ada kolom `jenjang`, kolom itu ikut dibaca. */
+  function levelKelas(k) {
+    var t = ((k.jenjang || '') + ' ' + k.nama + ' ' + (k.mapel || '') + ' ' + (k.program || '')).toLowerCase(), v = [];
+    if (/\b(pra ?tk|tk|paud)\b/.test(t)) { v.push('TK'); }
+    if (/\b(sd|mi)\b/.test(t)) { v.push('SD'); }
+    if (/\b(smp|mts)\b/.test(t)) { v.push('SMP'); }
+    if (/\b(sma|smk)\b/.test(t)) { v.push('SMA'); }
+    if (/calistung/.test(t)) {
+      if (v.indexOf('TK') < 0) { v.push('TK'); }
+      if (v.indexOf('SD') < 0) { v.push('SD'); }
+    }
+    return v;
+  }
+
+  /* Apakah kelas k (reguler, aktif) cocok dengan jenjang dan tingkat yang dipilih? */
   function kelasCocok(k, jenjang, tingkat) {
-    var teks = (k.jenjang + ' ' + k.nama + ' ' + k.program).toLowerCase();
-    var cocok;
-    if (jenjang === 'TK') { cocok = k.grup === 'tunas' || /\b(tk|pra ?tk|paud)\b/.test(teks); }
-    else if (jenjang === 'SD') { cocok = k.grup === 'pintar' || /\bsd\b/.test(teks); }
-    else if (jenjang === 'SMP') { cocok = /\bsmp\b/.test(teks); }
-    else if (jenjang === 'SMA') { cocok = /\bsma\b/.test(teks); }
-    else { cocok = false; }
-    if (!cocok) { return false; }
+    if (!k.aktif || k.khusus) { return false; }
+    var lv = levelKelas(k);
+    if (lv.length && lv.indexOf(jenjang) < 0) { return false; }
+    var teks = ((k.jenjang || '') + ' ' + k.nama).toLowerCase();
     if (jenjang === 'TK') {
       var kecil = /\bkecil\b/.test(teks), besar = /\bbesar\b/.test(teks);
       if (kecil !== besar) { return (tingkat === 'Kecil') === kecil; }
       return true;
     }
     var n = Number(tingkat);
-    var rentang = k.jenjang.match(/(\d{1,2})\s*[–\-—]\s*(\d{1,2})/);
+    if (jenjang === 'SD' && /calistung/.test(teks) && !/\bsd\b/.test(teks)) { return n <= 3; }   /* calistung = SD awal */
+    var rentang = teks.match(/(\d{1,2})\s*[–\-—]\s*(\d{1,2})/);
     if (rentang && n) { return n >= Number(rentang[1]) && n <= Number(rentang[2]); }
-    var tunggal = k.jenjang.match(/kelas\s*(\d{1,2})\b/i);
+    var tunggal = teks.match(/kelas\s*(\d{1,2})\b/);
     if (tunggal && n) { return n === Number(tunggal[1]); }
     return true;
   }
 
   function teksJadwal(k) {
-    var sisa = k.kuota - k.terisi;
-    return k.nama + ' · ' + k.hari + ', ' + k.jam + ' WIB (' + (sisa > 0 ? 'sisa ' + sisa + ' kursi' : 'penuh, masuk daftar tunggu') + ')';
+    return k.nama + ' · ' + k.hari + ', ' + jamTeks(k) + ' WIB (' + (sisaKursi(k) === 0 ? 'penuh, masuk daftar tunggu' : teksKuota(k)) + ')';
   }
 
   /* Isi dropdown jadwal Reguler dari data web pengajar */
@@ -1168,11 +1316,11 @@ body { padding-bottom: 6rem; }
         var hari = ambilHari(form, 'reguler');
         if (!hari.length) { throw new Galat('Pilih minimal satu hari yang diinginkan.'); }
         jadwal = 'Mengajukan jadwal sendiri (Reguler)\nKelas yang ingin diikuti: ' + (kelas ? kelas.nama : 'Kelas baru (belum ada di jadwal)') +
-          '\nHari: ' + hari.join(', ') + '\nJam: ' + ambilJam($('#b-jam1').value, $('#b-jam2').value);
+          '\nHari: ' + hari.join(', ') + '\nJam: ' + ambilJam(form.elements.jam1.value, form.elements.jam2.value);
       } else {
         var k = cariKelas(pilih);
         if (!k) { throw new Galat('Pilih jadwal kelas yang tersedia.'); }
-        jadwal = 'Jadwal dipilih: ' + k.nama + ', ' + k.hari + ', ' + k.jam + ' WIB' + (k.kuota - k.terisi <= 0 ? ' (kelas penuh, mohon masuk daftar tunggu)' : '');
+        jadwal = 'Jadwal dipilih: ' + k.nama + ', ' + k.hari + ', ' + jamTeks(k) + ' WIB' + (sisaKursi(k) === 0 ? ' (kelas penuh, mohon masuk daftar tunggu)' : '');
       }
     } else if (program === 'Private') {
       var hp = ambilHari(form.querySelector('#grup-private'), 'private');
@@ -1224,58 +1372,8 @@ body { padding-bottom: 6rem; }
       if (!bolehKirim()) { status.textContent = 'Mohon tunggu beberapa detik sebelum mengirim lagi.'; return; }
       status.textContent = 'Membuka WhatsApp ' + CONFIG.admin[admin].nama + '…';
       window.open(linkWA(admin, 'Halo ' + CONFIG.admin[admin].nama + ', ' + teks + '\n\nTerima kasih.'), '_blank', 'noopener,noreferrer');
-      simpanKeSheet(form, teks, admin);   /* tambahan: salinan data ke Google Sheet (tidak mengubah tampilan) */
     });
   }
-
-  /* Simpan salinan isian form ke Spreadsheet Web Utama (tab Pendaftaran / Testimoni).
-     Berjalan di latar belakang; bila gagal, pengiriman WhatsApp tetap berjalan seperti biasa. */
-  function simpanKeSheet(form, teks, admin) {
-  if (!apiSiap()) { return; }
-  var el = form.elements, data;
-  if (form.id === 'form-baru') {
-    var program = el.program.value;
-    var jadwalRingkas = '';
-
-    if (program === 'Reguler') {
-      if (el.jadwal.value === '__ajukan__') {
-        var kls = cariKelas(el.kelasdiikuti.value);
-        var namaKls = kls ? kls.nama : 'Kelas baru';
-        var hariReg = ambilHari(form, 'reguler').join(', ');
-        var jamReg = ambilJam($('#b-jam1').value, $('#b-jam2').value);
-        jadwalRingkas = 'Ajukan (' + namaKls + ') · ' + hariReg + ', ' + jamReg;
-      } else {
-        var k = cariKelas(el.jadwal.value);
-        jadwalRingkas = k ? (k.nama + ' · ' + k.hari + ', ' + k.jam + ' WIB') : '';
-      }
-    } else if (program === 'Private') {
-      var hariPriv = ambilHari(form.querySelector('#grup-private'), 'private').join(', ');
-      var jamPriv = ambilJam($('#p-jam1').value, $('#p-jam2').value);
-      jadwalRingkas = 'Private · ' + hariPriv + ', ' + jamPriv;
-    } else if (program === 'Event') {
-      var ev = cariEvent(el.event.value);
-      jadwalRingkas = ev ? ('Event: ' + ev.nama + (ev.tanggal ? ' (' + ev.tanggal + ')' : '')) : '';
-    }
-
-    data = {
-      aksi: 'daftar',
-      nama: el.nama.value,
-      ortu: el.ortu.value,
-      jenjang: el.jenjang.value,
-      tingkat: el.tingkat.value,
-      program: program,
-      jadwal: jadwalRingkas,
-      jadwal_id: (program === 'Reguler' && el.jadwal && el.jadwal.value !== '__ajukan__') ? el.jadwal.value : '',
-      admin: admin
-    };
-  } else {
-    data = { aksi: 'testimoni', ortu: el.ortu.value, anak: el.anak.value, idsiswa: el.idsiswa.value.trim().toUpperCase(), isi: el.isi.value, samar: el.samar.checked, admin: admin };
-  }
-  try {
-    fetch(API_URL, { method: 'POST', credentials: 'omit', redirect: 'follow', referrerPolicy: 'no-referrer', keepalive: true, body: JSON.stringify(data) })
-      .catch(function () { });
-  } catch (err) { }
-}
   kirimWA($('#form-baru'), '#status-baru', susunPendaftaran);
   kirimWA($('#form-testimoni'), '#status-testimoni', susunTestimoni);
 
@@ -1375,11 +1473,43 @@ body { padding-bottom: 6rem; }
     if (!isFinite(n)) { return awal; }
     return Math.min(max, Math.max(min, Math.round(n)));
   }
-  function tebakGrup(k) {
-    var t = (k.jenjang + ' ' + k.program + ' ' + k.nama).toLowerCase();
-    if (/tk|paud|tunas/.test(t)) { return 'tunas'; }
-    if (/\bsd\b|pintar/.test(t)) { return 'pintar'; }
-    return 'prestasi';
+  function benar(v) { return v === true || v === 1 || /^(1|true|ya|y|aktif)$/i.test(String(v == null ? '' : v).trim()); }
+  function jamNorm(v) {
+    var m = /^(\d{1,2})[:.](\d{2})/.exec(String(v == null ? '' : v).trim());
+    return m ? pad2(Number(m[1])) + ':' + m[2] : '';
+  }
+  /* Satu kelas dari web pengajar -> bentuk yang dipakai halaman ini. Hanya kolom yang diizinkan diambil
+     (daftar peserta dan tarif sengaja tidak dibawa). */
+  function normKelas(k) {
+    var jm = jamNorm(k.jam_mulai), js = jamNorm(k.jam_selesai);
+    if (!jm && k.jam) { var p = String(k.jam).split(/\s*[–—-]\s*/); jm = jamNorm(p[0]); js = jamNorm(p[1]); }
+    var terisi = (k.terisi != null && k.terisi !== '') ? k.terisi : (Array.isArray(k.peserta) ? k.peserta.length : k.jumlah_peserta);
+    var tgl = String(k.tgl_event || '').slice(0, 10);
+    tgl = /^\d{4}-\d{2}-\d{2}$/.test(tgl) ? tgl : '';
+    var hari = rapikan(k.hari, 20);
+    if (tgl && HARI.indexOf(hari) < 0) {
+      var d = tglLokal(tgl);
+      hari = d ? ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][d.getDay()] : hari;
+    }
+    return {
+      id: rapikan(k.id, 40), nama: rapikan(k.nama, 60), mapel: rapikan(k.mapel, 40), program: rapikan(k.program, 60), jenjang: rapikan(k.jenjang, 40),
+      hari: hari, jam_mulai: jm, jam_selesai: js, tentor: rapikan(k.tentor, 40),
+      kapasitas: angka(k.kapasitas, 0, 99, 0), terisi: angka(terisi, 0, 999, 0),
+      aktif: (k.aktif === undefined || k.aktif === '' || k.aktif === null) ? true : benar(k.aktif),
+      khusus: benar(k.khusus), tgl_event: tgl
+    };
+  }
+  /* Kelas khusus/event yang aktif otomatis menjadi pilihan program Event di form pendaftaran */
+  function eventDariKelas() {
+    var h = isoHariIni();
+    return KELAS.filter(function (k) { return k.aktif && k.khusus && (!k.tgl_event || k.tgl_event >= h); }).map(function (k) {
+      return {
+        id: 'kelas:' + k.id, nama: k.nama,
+        tanggal: k.tgl_event ? k.hari + ', ' + tglPendek(k.tgl_event) : k.hari,
+        jam: jamTeks(k),
+        ket: [k.mapel && 'Mapel: ' + k.mapel, k.tentor && 'Tentor: ' + k.tentor, teksKuota(k)].filter(Boolean).join(' · ')
+      };
+    });
   }
 
   function terapkanData(data) {
@@ -1395,23 +1525,18 @@ body { padding-bottom: 6rem; }
     pasangTautanWA();
 
     if (Array.isArray(data.kelas)) {
-      KELAS = data.kelas.filter(function (k) { return k && k.id && k.nama; }).slice(0, 100).map(function (k) {
-        var kelas = {
-          id: rapikan(k.id, 40), nama: rapikan(k.nama, 60), program: rapikan(k.program, 60), jenjang: rapikan(k.jenjang, 40),
-          grup: String(k.grup || ''), hari: rapikan(k.hari, 40), jam: rapikan(k.jam, 30), ruang: rapikan(k.ruang, 30),
-          terisi: angka(k.terisi, 0, 99, 0), kuota: angka(k.kuota, 1, 99, 4)
-        };
-        if (['tunas', 'pintar', 'prestasi'].indexOf(kelas.grup) === -1) { kelas.grup = tebakGrup(kelas); }
-        return kelas;
-      });
+      KELAS = data.kelas.filter(function (k) { return k && k.id && k.nama; }).slice(0, 100).map(normKelas);
     }
-    tampilkanJadwal(grupAktif);
+    isiFilter();
+    tampilkanJadwal();
 
+    var dariPengumuman = [];
     if (Array.isArray(data.event)) {
-      EVENT = data.event.filter(function (e) { return e && e.nama; }).slice(0, 20).map(function (e, i) {
+      dariPengumuman = data.event.filter(function (e) { return e && e.nama; }).slice(0, 20).map(function (e, i) {
         return { id: rapikan(e.id || ('ev' + i), 40), nama: rapikan(e.nama, 80), tanggal: rapikan(e.tanggal, 40), jam: rapikan(e.jam, 30), ket: rapikan(e.ket || e.keterangan, 200) };
       });
-    } else { EVENT = []; }
+    }
+    EVENT = dariPengumuman.concat(eventDariKelas());
     isiPilihanEvent();
     if ($('#b-program').value === 'Reguler') { isiPilihanJadwal(); }
 
@@ -1454,9 +1579,114 @@ body { padding-bottom: 6rem; }
   document.addEventListener('DOMContentLoaded', pasangAset);
 
   /* ================================================================
+     9b. CAROUSEL PROGRAM  (@@PROGRAM)
+         Kartu di tengah = terpilih. Geser, ketuk kartu samping, tombol panah, titik, atau tombol keyboard.
+     ================================================================ */
+  function aturCarousel() {
+    var wadah = $('#prog-carousel'), stage = $('#prog-stage');
+    if (!wadah || !stage) { return; }
+    var kartu = $$('#prog-stage .prog-card'), n = kartu.length;
+    if (n < 2) { return; }
+    var dots = $('#prog-dots'), live = $('#prog-live');
+    var tengah = Math.min(1, n - 1), drag = null, habisGeser = false;
+
+    kartu.forEach(function (c, i) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'prog-dot';
+      b.setAttribute('aria-label', 'Tampilkan ' + c.getAttribute('aria-label'));
+      b.addEventListener('click', function () { pilih(i); });
+      dots.appendChild(b);
+    });
+
+    function posisi(i) {
+      var d = (i - tengah + n) % n;
+      return d === 0 ? 0 : (d === 1 ? 1 : (d === n - 1 ? -1 : 2));
+    }
+
+    function terapkan(umumkan) {
+      kartu.forEach(function (c, i) {
+        var baru = posisi(i), lama = c.hasAttribute('data-pos') ? Number(c.getAttribute('data-pos')) : baru;
+        if (Math.abs(baru - lama) > 1 && baru !== 2 && lama !== 2) {
+          /* kartu yang melompat dari satu sisi ke sisi lain: muncul pelan, tidak melintas di depan kartu tengah */
+          c.style.transition = 'none'; c.style.opacity = '0';
+          c.setAttribute('data-pos', baru);
+          void c.offsetWidth;
+          c.style.transition = ''; c.style.opacity = '';
+        } else {
+          c.setAttribute('data-pos', baru);
+        }
+        var tgh = baru === 0;
+        if (tgh) { c.removeAttribute('role'); c.removeAttribute('tabindex'); }
+        else if (baru !== 2) { c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); }
+        else { c.setAttribute('role', 'presentation'); c.setAttribute('tabindex', '-1'); }
+        Array.prototype.forEach.call(c.querySelectorAll('a, button'), function (x) { x.tabIndex = tgh ? 0 : -1; });
+        c.setAttribute('aria-hidden', baru === 2 ? 'true' : 'false');
+      });
+      Array.prototype.forEach.call(dots.children, function (d, i) { d.setAttribute('aria-current', i === tengah ? 'true' : 'false'); });
+      if (umumkan) { live.textContent = 'Menampilkan ' + kartu[tengah].getAttribute('aria-label') + ', ' + (tengah + 1) + ' dari ' + n; }
+    }
+    function pilih(i) { tengah = ((i % n) + n) % n; terapkan(true); }
+    function geserKe(arah) { pilih(tengah + arah); }
+
+    /* Ketuk kartu samping -> pindah ke tengah. Ketuk kartu tengah -> tombolnya bekerja normal. */
+    stage.addEventListener('click', function (e) {
+      if (habisGeser) { e.preventDefault(); e.stopPropagation(); return; }
+      var c = e.target.closest ? e.target.closest('.prog-card') : null;
+      if (!c) { return; }
+      var i = kartu.indexOf(c);
+      if (i !== tengah) { e.preventDefault(); pilih(i); }
+    }, true);
+
+    /* Geser dengan jari atau mouse (gulir vertikal halaman tetap berfungsi) */
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) { return; }
+      drag = { x: e.clientX, y: e.clientY, id: e.pointerId, dx: 0, aktif: false };
+      habisGeser = false;
+    });
+    stage.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) { return; }
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.aktif) {
+        if (Math.abs(dx) < 8) { return; }
+        if (Math.abs(dy) > Math.abs(dx)) { drag = null; return; }
+        drag.aktif = true; stage.classList.add('drag');
+        try { stage.setPointerCapture(e.pointerId); } catch (err) { /* abaikan */ }
+      }
+      drag.dx = dx;
+      stage.style.setProperty('--dx', dx + 'px');
+    });
+    function selesai(e) {
+      if (!drag || e.pointerId !== drag.id) { return; }
+      var d = drag; drag = null;
+      stage.classList.remove('drag'); stage.style.removeProperty('--dx');
+      if (!d.aktif) { return; }
+      habisGeser = true; setTimeout(function () { habisGeser = false; }, 80);
+      if (Math.abs(d.dx) > 45) { geserKe(d.dx < 0 ? 1 : -1); }
+    }
+    stage.addEventListener('pointerup', selesai);
+    stage.addEventListener('pointercancel', selesai);
+
+    $('#prog-prev').addEventListener('click', function () { geserKe(-1); });
+    $('#prog-next').addEventListener('click', function () { geserKe(1); });
+
+    wadah.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); geserKe(-1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); geserKe(1); }
+      else if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('prog-card') && kartu.indexOf(e.target) !== tengah) {
+        e.preventDefault(); pilih(kartu.indexOf(e.target));
+      }
+    });
+
+    terapkan(false);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { stage.classList.add('siap'); }); });
+  }
+
+  /* ================================================================
      10. MULAI
      ================================================================ */
-  tampilkanJadwal('semua');
+  isiFilter();
+  tampilkanJadwal();
+  aturCarousel();
   tampilkanTestimoni([]);
   bukaHalaman();
   muatData(false);
@@ -1469,4 +1699,3 @@ body { padding-bottom: 6rem; }
   </script>
 </body>
 </html>
-Displaying WEB UTAMA PLUS.html.
