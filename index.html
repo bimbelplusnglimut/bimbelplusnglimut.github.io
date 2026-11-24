@@ -1231,20 +1231,51 @@ body { padding-bottom: 6rem; }
   /* Simpan salinan isian form ke Spreadsheet Web Utama (tab Pendaftaran / Testimoni).
      Berjalan di latar belakang; bila gagal, pengiriman WhatsApp tetap berjalan seperti biasa. */
   function simpanKeSheet(form, teks, admin) {
-    if (!apiSiap()) { return; }
-    var el = form.elements, data;
-    if (form.id === 'form-baru') {
-      var program = el.program.value, pisah = teks.split('Program: ' + program + '\n');
-      data = { aksi: 'daftar', nama: el.nama.value, ortu: el.ortu.value, jenjang: el.jenjang.value, tingkat: el.tingkat.value, program: program,
-        jadwal: pisah.length > 1 ? pisah[1] : '', jadwal_id: (program === 'Reguler' && el.jadwal && el.jadwal.value !== '__ajukan__') ? el.jadwal.value : '', admin: admin };
-    } else {
-      data = { aksi: 'testimoni', ortu: el.ortu.value, anak: el.anak.value, idsiswa: el.idsiswa.value.trim().toUpperCase(), isi: el.isi.value, samar: el.samar.checked, admin: admin };
+  if (!apiSiap()) { return; }
+  var el = form.elements, data;
+  if (form.id === 'form-baru') {
+    var program = el.program.value;
+    var jadwalRingkas = '';
+
+    if (program === 'Reguler') {
+      if (el.jadwal.value === '__ajukan__') {
+        var kls = cariKelas(el.kelasdiikuti.value);
+        var namaKls = kls ? kls.nama : 'Kelas baru';
+        var hariReg = ambilHari(form, 'reguler').join(', ');
+        var jamReg = ambilJam($('#b-jam1').value, $('#b-jam2').value);
+        jadwalRingkas = 'Ajukan (' + namaKls + ') · ' + hariReg + ', ' + jamReg;
+      } else {
+        var k = cariKelas(el.jadwal.value);
+        jadwalRingkas = k ? (k.nama + ' · ' + k.hari + ', ' + k.jam + ' WIB') : '';
+      }
+    } else if (program === 'Private') {
+      var hariPriv = ambilHari(form.querySelector('#grup-private'), 'private').join(', ');
+      var jamPriv = ambilJam($('#p-jam1').value, $('#p-jam2').value);
+      jadwalRingkas = 'Private · ' + hariPriv + ', ' + jamPriv;
+    } else if (program === 'Event') {
+      var ev = cariEvent(el.event.value);
+      jadwalRingkas = ev ? ('Event: ' + ev.nama + (ev.tanggal ? ' (' + ev.tanggal + ')' : '')) : '';
     }
-    try {
-      fetch(API_URL, { method: 'POST', credentials: 'omit', redirect: 'follow', referrerPolicy: 'no-referrer', keepalive: true, body: JSON.stringify(data) })
-        .catch(function () { });
-    } catch (err) { }
+
+    data = {
+      aksi: 'daftar',
+      nama: el.nama.value,
+      ortu: el.ortu.value,
+      jenjang: el.jenjang.value,
+      tingkat: el.tingkat.value,
+      program: program,
+      jadwal: jadwalRingkas,
+      jadwal_id: (program === 'Reguler' && el.jadwal && el.jadwal.value !== '__ajukan__') ? el.jadwal.value : '',
+      admin: admin
+    };
+  } else {
+    data = { aksi: 'testimoni', ortu: el.ortu.value, anak: el.anak.value, idsiswa: el.idsiswa.value.trim().toUpperCase(), isi: el.isi.value, samar: el.samar.checked, admin: admin };
   }
+  try {
+    fetch(API_URL, { method: 'POST', credentials: 'omit', redirect: 'follow', referrerPolicy: 'no-referrer', keepalive: true, body: JSON.stringify(data) })
+      .catch(function () { });
+  } catch (err) { }
+}
   kirimWA($('#form-baru'), '#status-baru', susunPendaftaran);
   kirimWA($('#form-testimoni'), '#status-testimoni', susunTestimoni);
 
