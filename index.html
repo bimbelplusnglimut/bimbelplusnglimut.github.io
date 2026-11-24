@@ -1374,22 +1374,21 @@ body { padding-bottom: 6rem; }
     var kelasTeks = jenjang === 'TK' ? 'TK ' + tingkat : jenjang + ' kelas ' + tingkat;
     var program = form.elements.program.value, jadwal, idKelas = '';
 
-    if (program === 'Reguler') {
-  var pilih = form.elements.jadwal.value;
-  if (pilih === '__ajukan__') {
-    var kd = form.elements.kelasdiikuti.value, kelas = cariKelas(kd);
-    var hari = ambilHari(form, 'reguler');
-    if (!hari.length) { throw new Galat('Pilih minimal satu hari yang diinginkan.'); }
-    idKelas = kelas ? kelas.id : '';
-    jadwal = 'Mengajukan jadwal sendiri (Reguler)\nKelas yang ingin diikuti: ' + (kelas ? kelas.nama : 'Kelas baru (belum ada di jadwal)') +
-      '\nHari: ' + hari.join(', ') + '\nJam: ' + ambilJam($('#b-jam1').value, $('#b-jam2').value);
-  } else {
-    var k = cariKelas(pilih);
-    if (!k) { throw new Galat('Pilih jadwal kelas yang tersedia.'); }
-    idKelas = k.id;
-    jadwal = 'Jadwal dipilih: ' + k.nama + ', ' + k.hari + ', ' + jamTeks(k) + ' WIB' + (sisaKursi(k) === 0 ? ' (kelas penuh, mohon masuk daftar tunggu)' : '');
-  }
-}
+        if (program === 'Reguler') {
+      var pilih = form.elements.jadwal.value;
+      if (pilih === '__ajukan__') {
+        var kd = form.elements.kelasdiikuti.value, kelas = cariKelas(kd);
+        var hari = ambilHari(form, 'reguler');
+        if (!hari.length) { throw new Galat('Pilih minimal satu hari yang diinginkan.'); }
+        idKelas = kelas ? kelas.id : '';
+        jadwal = 'Mengajukan jadwal sendiri (Reguler)\nKelas yang ingin diikuti: ' + (kelas ? kelas.nama : 'Kelas baru (belum ada di jadwal)') +
+          '\nHari: ' + hari.join(', ') + '\nJam: ' + ambilJam($('#b-jam1').value, $('#b-jam2').value);
+      } else {
+        var k = cariKelas(pilih);
+        if (!k) { throw new Galat('Pilih jadwal kelas yang tersedia.'); }
+        idKelas = k.id;
+        jadwal = 'Jadwal dipilih: ' + k.nama + ', ' + k.hari + ', ' + jamTeks(k) + ' WIB' + (sisaKursi(k) === 0 ? ' (kelas penuh, mohon masuk daftar tunggu)' : '');
+      }
     } else if (program === 'Private') {
       var hp = ambilHari(form.querySelector('#grup-private'), 'private');
       if (!hp.length) { throw new Galat('Pilih minimal satu hari yang diinginkan.'); }
