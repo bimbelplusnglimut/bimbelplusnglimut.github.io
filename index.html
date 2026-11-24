@@ -1325,12 +1325,30 @@ body { padding-bottom: 6rem; }
     return Array.prototype.filter.call(form.querySelectorAll('input[name="hari-' + grup + '"]'), function (c) { return c.checked && HARI.indexOf(c.value) > -1; })
       .map(function (c) { return c.value; });
   }
-  function ambilJam(m, s) {
-    var pola = /^([01]\d|2[0-3]):[0-5]\d$/;
-    if (!pola.test(m) || !pola.test(s)) { throw new Galat('Jam mulai dan jam selesai belum diisi dengan benar.'); }
-    if (s <= m) { throw new Galat('Jam selesai harus lebih akhir dari jam mulai.'); }
-    return m.replace(':', '.') + ' – ' + s.replace(':', '.') + ' WIB';
+  
+ function ambilJam(m, s) {
+  function normalJam(val) {
+    var str = String(val || '').trim();
+    var cocok = str.match(/^(\d{1,2}):([0-5]\d)(?::[0-5]\d)?$/);
+    if (!cocok) { return null; }
+    var jam = parseInt(cocok[1], 10);
+    var menit = parseInt(cocok[2], 10);
+    if (jam < 0 || jam > 23 || menit < 0 || menit > 59) { return null; }
+    return (jam < 10 ? '0' : '') + jam + ':' + (menit < 10 ? '0' : '') + menit;
   }
+
+  var jamMulai = normalJam(m);
+  var jamSelesai = normalJam(s);
+
+  if (!jamMulai || !jamSelesai) {
+    throw new Galat('Jam mulai dan jam selesai belum diisi dengan benar.');
+  }
+  if (jamSelesai <= jamMulai) {
+    throw new Galat('Jam selesai harus lebih akhir dari jam mulai.');
+  }
+  return jamMulai.replace(':', '.') + ' – ' + jamSelesai.replace(':', '.') + ' WIB';
+}
+  
   function cariKelas(id) { return KELAS.filter(function (k) { return 'kelas:' + k.id === id; })[0]; }
 
   function kirimSheet(payload) {
@@ -1357,20 +1375,21 @@ body { padding-bottom: 6rem; }
     var program = form.elements.program.value, jadwal, idKelas = '';
 
     if (program === 'Reguler') {
-      var pilih = form.elements.jadwal.value;
-      if (pilih === '__ajukan__') {
-        var kd = form.elements.kelasdiikuti.value, kelas = cariKelas(kd);
-        var hari = ambilHari(form, 'reguler');
-        if (!hari.length) { throw new Galat('Pilih minimal satu hari yang diinginkan.'); }
-        idKelas = kelas ? kelas.id : '';
-        jadwal = 'Mengajukan jadwal sendiri (Reguler)\nKelas yang ingin diikuti: ' + (kelas ? kelas.nama : 'Kelas baru (belum ada di jadwal)') +
-          '\nHari: ' + hari.join(', ') + '\nJam: ' + ambilJam(form.elements.jam1.value, form.elements.jam2.value);
-      } else {
-        var k = cariKelas(pilih);
-        if (!k) { throw new Galat('Pilih jadwal kelas yang tersedia.'); }
-        idKelas = k.id;
-        jadwal = 'Jadwal dipilih: ' + k.nama + ', ' + k.hari + ', ' + jamTeks(k) + ' WIB' + (sisaKursi(k) === 0 ? ' (kelas penuh, mohon masuk daftar tunggu)' : '');
-      }
+  var pilih = form.elements.jadwal.value;
+  if (pilih === '__ajukan__') {
+    var kd = form.elements.kelasdiikuti.value, kelas = cariKelas(kd);
+    var hari = ambilHari(form, 'reguler');
+    if (!hari.length) { throw new Galat('Pilih minimal satu hari yang diinginkan.'); }
+    idKelas = kelas ? kelas.id : '';
+    jadwal = 'Mengajukan jadwal sendiri (Reguler)\nKelas yang ingin diikuti: ' + (kelas ? kelas.nama : 'Kelas baru (belum ada di jadwal)') +
+      '\nHari: ' + hari.join(', ') + '\nJam: ' + ambilJam($('#b-jam1').value, $('#b-jam2').value);
+  } else {
+    var k = cariKelas(pilih);
+    if (!k) { throw new Galat('Pilih jadwal kelas yang tersedia.'); }
+    idKelas = k.id;
+    jadwal = 'Jadwal dipilih: ' + k.nama + ', ' + k.hari + ', ' + jamTeks(k) + ' WIB' + (sisaKursi(k) === 0 ? ' (kelas penuh, mohon masuk daftar tunggu)' : '');
+  }
+}
     } else if (program === 'Private') {
       var hp = ambilHari(form.querySelector('#grup-private'), 'private');
       if (!hp.length) { throw new Galat('Pilih minimal satu hari yang diinginkan.'); }
