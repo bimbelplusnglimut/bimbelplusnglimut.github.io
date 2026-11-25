@@ -2159,7 +2159,7 @@ body { padding-bottom: 6rem; }
       k.lastChild.setAttribute('aria-hidden', 'true'); k.firstChild.setAttribute('aria-hidden', 'true');
       var cp = el('div', 'pz-chips'); cp.appendChild(el('span', 'pz-chip', x.jenjang)); cp.appendChild(el('span', 'pz-chip', x.mapel)); k.appendChild(cp);
       k.appendChild(el('h3', 'pz-ttl', x.nama)); k.appendChild(el('p', 'pz-desc', x.deskripsi));
-      var a = el('a', 'pz-open', 'Buka Aplikasi ↗'); a.href = x.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.setAttribute('aria-label', 'Buka aplikasi ' + x.nama + ' di tab baru'); k.appendChild(a);
+      var a = el('a', 'pz-open', 'Buka Aplikasi ↗'); a.href = x.url; a.setAttribute('aria-label', 'Buka aplikasi ' + x.nama); k.appendChild(a);
       terapkanDesain(k, d.nomor); grid.appendChild(k);
     });
     return tampil.length;
